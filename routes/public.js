@@ -15,6 +15,10 @@ router.post('/register', async (req, res) => {
     try {
         const user = req.body
 
+        if(user.password !== user.confirmPassword) {
+            res.status(400).json({ message: "As senhas não são iguais"})
+        }
+
         // PESO DA ENCRIPTAÇÃO
         const salt = await bcrypt.genSalt(10)
 
