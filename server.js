@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 
 // CONF. PORTA
-app.listen(3000, () => console.log("Servidor ligado! 🚀"))
+app.listen(3000, () => console.log("Servidor ligado na porta 3000! 🚀"))
 
 /** 
  * ROTA PÚBLICA: LOGIN E CADASTRO
