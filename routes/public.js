@@ -7,6 +7,16 @@ import jwt from 'jsonwebtoken'
 const router = express.Router()
 const prisma = new PrismaClient()
 
+const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLocaleLowerCase())
+}
+
+const validatePassword = (password) => {
+    const minLength = 6
+    return password.length >= minLength
+}
+
 // O JWT SECRET É UMA CAMADA EXTRA DE SEGURANÇA PARA O TOKEN (ENCRIPTAR OU DESENCRIPTAR)
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -16,10 +26,15 @@ router.post('/register', async (req, res) => {
 
     // VALIDAÇÕES DE CAMPOS VAZIOS OU NÃO PREENCHIDOS CORRETAMENTE
     if (!name) {
-        return res.status(422).json({ message: "Nome não informado. Por favor, preencha o campo" })
+        return res.status(422).json({ message: "Nome não informado. Por favor, preencha o campo." })
     }
+
     if (!email) {
         return res.status(422).json({ message: "E-mail não informado. Por favor, preencha o campo." })
+    }
+
+    if (!validateEmail(email)) {
+        return res.status(422).json({ message: "Por favor, informe um e-mail válido." })
     }
 
     if (!password || !confirmPassword) {
@@ -27,7 +42,11 @@ router.post('/register', async (req, res) => {
     }
 
     if (password !== confirmPassword) {
-        return res.status(400).json({ message: "As senhas não são iguais" })
+        return res.status(400).json({ message: "As senhas não são iguais." })
+    }
+
+    if (!validatePassword(password)) {
+        return res.status(422).json({ message: "A senha precisa ter mais de seis dígitos." })
     }
 
     // VALIDAR SE O E-MAIL JÁ EXISTE NO BANCO DE DADOS
@@ -38,7 +57,7 @@ router.post('/register', async (req, res) => {
     })
 
     if (emailExist) {
-        return res.status(422).json({ message: "O e-mail já está cadastrado. Por favor, faça o login" })
+        return res.status(422).json({ message: "O e-mail já está cadastrado. Por favor, faça o login." })
     }
 
     // PESO DA ENCRIPTAÇÃO
@@ -75,8 +94,16 @@ router.post('/login', async (req, res) => {
         return res.status(422).json({ message: "Por favor, informe o seu e-mail." })
     }
 
+    if (!validateEmail(email)) {
+        return res.status(422).json({ message: "Por favor, informe um e-mail válido." })
+    }
+
     if (!password) {
         return res.status(422).json({ message: "Por favor, informe a sua senha." })
+    }
+
+    if (!validatePassword(password)) {
+        return res.status(422).json({ message: "A senha precisa ter mais de seis dígitos."})
     }
 
     // VERIFICAR COM O PRISMA SE O EMAIL DIGITADO EM "req.body" É IGUAL AO E-MAIL NO DB.
@@ -100,12 +127,12 @@ router.post('/login', async (req, res) => {
 
     try {
         // GERAÇÃO DO TOKEN JWT
-        const token = jwt.sign({ id: userLogin.id }, JWT_SECRET, { expiresIn: '1m' })
+        const token = jwt.sign({ id: userLogin.id }, JWT_SECRET, { expiresIn: '2m' })
 
         res.status(200).json({ token })
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: "Erro no servidor. Tente novamente" })
+        res.status(500).json({ message: "Erro no servidor. Tente novamente." })
     }
 })
 
