@@ -8,7 +8,7 @@ router.get('/listUsers', async (req, res) => {
     try {
         const allUsers = await prisma.user.findMany({
             select: {
-                id: false,
+                id: true,
                 name: true,
                 email: true,
                 password: false
