@@ -9,7 +9,7 @@ app.use(express.json())
 app.use(cors('https://app-loggie.onrender.com'))
 
 // CONF. PORTA
-app.listen(process.env.PORT || 3000, () => console.log("Servidor ligado na porta 3000! 🚀"))
+app.listen(process.env.PORT || 3000, () => console.log("Servidor ligado! 🚀"))
 
 /** 
  * ROTA PÚBLICA: LOGIN E CADASTRO
