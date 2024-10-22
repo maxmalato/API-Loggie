@@ -24,6 +24,10 @@ const JWT_SECRET = process.env.JWT_SECRET
 router.post('/register', async (req, res) => {
     const { name, email, password, confirmPassword } = req.body
 
+    // AJUSTE DO HORÁRIO LOCAL - BRASILIA
+    const currentDate = new Date()
+    const brazilTime = new Date(currentDate.setHours(currentDate.getHours() - 3))
+
     // VALIDAÇÕES DE CAMPOS VAZIOS OU NÃO PREENCHIDOS CORRETAMENTE
     if (!name) {
         return res.status(422).json({ message: "Nome não informado. Por favor, preencha o campo." })
@@ -71,7 +75,8 @@ router.post('/register', async (req, res) => {
             data: {
                 name: name,
                 email: email,
-                password: hashPassword
+                password: hashPassword,
+                createdAt: brazilTime
             },
             select: {
                 name: true,

@@ -9,14 +9,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 // SCHEMA DO USUÁRIO
 model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id      Int      @id @default(autoincrement())
   name    String
   email   String   @unique
   password String
+  createdAt DateTime @default(now())
 }
